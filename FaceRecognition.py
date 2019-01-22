@@ -8,7 +8,6 @@ eye_cascade = cv2.CascadeClassifier('haarcascade_eye.xml')
 smile_cascade=cv2.CascadeClassifier('haarcascade_smile.xml')
 
 
-
 while True:
         ret, img = cap.read()
         gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
