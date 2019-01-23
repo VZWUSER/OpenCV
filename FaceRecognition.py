@@ -12,6 +12,7 @@ while True:
         faces = face_cascade.detectMultiScale(gray,1.1,5)
         for(x,y,w,h) in faces:
             cv2.rectangle(img,(x,y),(x+w,y+h),(255,0,0),1)
+            cv2.imwrite("roi.jpg",img[y:y+h, x:x+w])
             roi_gray = gray[y:y+h,x:x+w]
             roi_color=img[y:y+h,x:x+w]
             eyes = eye_cascade.detectMultiScale(roi_color)
