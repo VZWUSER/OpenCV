@@ -3,12 +3,14 @@ import numpy as np
 import uuid
 import glob
 import os
+from vidstab import VidStab
+
 
 cap = cv2.VideoCapture(0)
-face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
-eye_cascade = cv2.CascadeClassifier('haarcascade_eye.xml')
-smile_cascade=cv2.CascadeClassifier('haarcascade_smile.xml')
-
+face_cascade = cv2.CascadeClassifier('xml/haarcascade_frontalface_default.xml')
+eye_cascade = cv2.CascadeClassifier('xml/haarcascade_eye.xml')
+smile_cascade=cv2.CascadeClassifier('xml/haarcascade_smile.xml')
+snapshots = 80 #at 60 FPS this is 3 seconds
 
 def makemovie(filename,hastitle):
     img_array = []
@@ -40,18 +42,22 @@ def makemovie(filename,hastitle):
         img_array.append(img)
 
     print('setting out')
-    out = cv2.VideoWriter('videos/' + searchword + '.mp4', cv2.VideoWriter_fourcc(*'MP4V'),
-                          framerate, size)  # *'MP4V'
+    out = cv2.VideoWriter('videos/' + searchword + '.mp4', cv2.VideoWriter_fourcc(*'MP4V'),framerate, size)  # *'MP4V'
+    #os.system("ffmpeg -i Video.mp4 -vcodec libx264 "+'/videos/' + searchword + '.mp4')
     print('adding all frames')
     for i in range(len(img_array)):
-        # if i> titlelen:
+        #Uncomment for no delay
+        out.write(img_array[i])
         # for k in range(20,100,20):
         # out.write(cv2.blur(img_array[i],(k,k)) )
-        for j in range(1, 15):
-            out.write(img_array[i])
+        #Uncomment next 2 lines for .25 second per photo
+        #for j in range(1, 15):
+            #out.write(img_array[i])
             # for k in range(100,10,-10):
             # out.write(cv2.blur(img_array[i],(k,k)) )
     out.release()
+    #stabilizer = VidStab(kp_method='ORB')
+    #stabilizer.stabilize(input_path='videos/momo.mp4', output_path='videos/momo1.mp4')
     print('Done')
 
 
@@ -64,7 +70,7 @@ files = glob.glob('images/*')
 for f in files:
     os.remove(f)
 
-for x in range(50):
+for x in range(snapshots):
         ret, img = cap.read()
         gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
         faces = face_cascade.detectMultiScale(gray,1.1,5)
